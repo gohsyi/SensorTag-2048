@@ -57,22 +57,13 @@ public class ScanFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         // initialize the right scan callback for the current API level
-        if (Build.VERSION.SDK_INT >= 21) {
-            mScanCallback = new ScanCallback() {
-                @Override
-                public void onScanResult(int callbackType, ScanResult result) {
-                    super.onScanResult(callbackType, result);
-                    mRecyclerViewAdapter.addDevice(result.getDevice().getAddress());
-                }
-            };
-        } else {
-            mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
-                @Override
-                public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
-                    mRecyclerViewAdapter.addDevice(bluetoothDevice.getAddress());
-                }
-            };
-        }
+        mScanCallback = new ScanCallback() {
+            @Override
+            public void onScanResult(int callbackType, ScanResult result) {
+                super.onScanResult(callbackType, result);
+                mRecyclerViewAdapter.addDevice(result.getDevice().getAddress());
+            }
+        };
 
         // initialize bluetooth manager & adapter
         BluetoothManager manager = (BluetoothManager) getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
@@ -96,14 +87,14 @@ public class ScanFragment extends Fragment {
      */
     private void startScan() {
         if (mRecyclerViewAdapter.getSize() == 0) mListener.onShowProgress();
-        if (Build.VERSION.SDK_INT < 21) {
-            mBluetoothAdapter.startLeScan(mLeScanCallback);
-        } else {
-            // request BluetoothLeScanner if it hasn't been initialized yet
-            if (mLeScanner == null) mLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
-            // start scan in low latency mode
-            mLeScanner.startScan(new ArrayList<ScanFilter>(), new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build(), mScanCallback);
-        }
+        // request BluetoothLeScanner if it hasn't been initialized yet
+        if (mLeScanner == null) mLeScanner = mBluetoothAdapter.getBluetoothLeScanner();
+        // start scan in low latency mode
+        mLeScanner.startScan(
+                new ArrayList<ScanFilter>(),
+                new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build(),
+                mScanCallback
+        );
     }
 
     /**
@@ -111,11 +102,7 @@ public class ScanFragment extends Fragment {
      */
     private void stopScan() {
         if (mBluetoothAdapter.isEnabled()) {
-            if (Build.VERSION.SDK_INT < 21) {
-                mBluetoothAdapter.stopLeScan(mLeScanCallback);
-            } else {
-                mLeScanner.stopScan(mScanCallback);
-            }
+            mLeScanner.stopScan(mScanCallback);
         }
     }
 

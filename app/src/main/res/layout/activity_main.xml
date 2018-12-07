@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context="com.martindisch.accelerometer.MainActivity">
 
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/game_start"/>
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"

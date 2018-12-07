@@ -5,7 +5,7 @@ android {
     buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.martindisch.accelerometer"
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode 6
         versionName "1.2"

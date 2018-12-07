@@ -21,6 +21,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.util.Log;
+
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -78,10 +80,26 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
         return fragment;
     }
 
+    /**
+     * Called to do initial creation of a fragment.  This is called before
+     * {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     *
+     * <p>Note that this can be called while the fragment's activity is
+     * still in the process of being created.  As such, you can not rely
+     * on things like the activity's content view hierarchy being initialized
+     * at this point.  If you want to do work once the activity itself is
+     * created, see {@link #onActivityCreated(Bundle)}.
+     *
+     * <p>Any restored child fragments will be created before the base
+     * <code>Fragment.onCreate</code> method returns.</p>
+     *
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+        if (getArguments() != null) {  // getArguments() returns a Bundle, like map in C++
             mAddress = getArguments().getString(ARG_ADDRESS);
         }
 
@@ -90,12 +108,18 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
         mBluetoothAdapter = manager.getAdapter();
     }
 
+    /**
+     * Called when the fragment is visible to the user and actively running.
+     */
     @Override
     public void onResume() {
         super.onResume();
         connectDevice(mAddress);
     }
 
+    /**
+     * Called when the Fragment is no longer resumed.
+     */
     @Override
     public void onPause() {
         deviceDisconnected();
@@ -142,7 +166,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getActivity(), R.string.service_not_found, Toast.LENGTH_LONG).show();
                 getActivity().finish();
             }
-            /**
+            /*
              * Bits starting with the least significant bit (the rightmost one)
              * 0       Gyroscope z axis enable
              * 1       Gyroscope y axis enable
@@ -159,6 +183,21 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             mGatt.writeCharacteristic(mEnable);
         }
 
+        /**
+         * Callback indicating the result of a characteristic write operation.
+         *
+         * <p>If this callback is invoked while a reliable write transaction is
+         * in progress, the value of the characteristic represents the value
+         * reported by the remote device. An application should compare this
+         * value to the desired value to be written. If the values don't match,
+         * the application must abort the reliable write transaction.
+         *
+         * @param gatt GATT client invoked {@link BluetoothGatt#writeCharacteristic}
+         * @param characteristic Characteristic that was written to the associated
+         *                       remote device.
+         * @param status The result of the write operation
+         *               {@link BluetoothGatt#GATT_SUCCESS} if the operation succeeds.
+         */
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicWrite(gatt, characteristic, status);
@@ -184,11 +223,24 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             }
         }
 
+        /**
+         * Callback reporting the result of a characteristic read operation.
+         *
+         * @param gatt GATT client invoked {@link BluetoothGatt#readCharacteristic}
+         * @param characteristic Characteristic that was read from the associated
+         *                       remote device.
+         * @param status {@link BluetoothGatt#GATT_SUCCESS} if the read operation
+         *               was completed successfully.
+         */
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             super.onCharacteristicRead(gatt, characteristic, status);
             // convert raw byte array to G unit values for xyz axes
-            result = Util.convertAccel(characteristic.getValue());
+            result = Util.convertAccel(characteristic.getValue());  // TODO figure out how this work
+            Log.d("Acceleration x", Double.toString(result[0]));
+            Log.d("Acceleration y", Double.toString(result[1]));
+            Log.d("Acceleration z", Double.toString(result[2]));
+
             if (mIsRecording) {
                 Measurement measurement = new Measurement(result[0], result[1], result[2], formatter.format(Calendar.getInstance().getTime()));
                 mRecording.add(measurement);
@@ -225,7 +277,10 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
             case R.id.bExport:
                 try {
                     // create and write output file in cache directory
-                    File outputFile = new File(getActivity().getCacheDir(), "recording" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(Calendar.getInstance().getTime()) + ".csv");
+                    File outputFile = new File(
+                            getActivity().getCacheDir(),
+                            "recording" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(Calendar.getInstance().getTime()) + ".csv"
+                    );
                     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outputFile));
                     writer.write(Util.recordingToCSV(mRecording));
                     writer.close();
@@ -267,7 +322,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                 boolean hasConnection = true;
                 while (hasConnection) {
                     long diff = Calendar.getInstance().getTimeInMillis() - previousRead.getTimeInMillis();
-                    if (diff > 2000) {
+                    if (diff > 2000) {  // no reacts in 2 seconds -> lose connection
                         hasConnection = false;
                         mStart.post(new Runnable() {
                             @Override

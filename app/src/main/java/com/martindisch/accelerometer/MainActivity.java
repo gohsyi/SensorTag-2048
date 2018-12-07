@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements OnStatusListener {
@@ -28,20 +30,27 @@ public class MainActivity extends AppCompatActivity implements OnStatusListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mSwipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        mSwipeContainer.setEnabled(false);
-        mSwipeContainer.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
+        Button button = (Button) findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSwipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+                mSwipeContainer.setEnabled(false);
+//                mSwipeContainer.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
 
-        // exit if the device doesn't have BLE
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(this, R.string.no_ble, Toast.LENGTH_SHORT).show();
-            finish();
-        }
-
-        // load ScanFragment
-        mFragmentManager = getSupportFragmentManager();
-        mCurrentFragment = ScanFragment.newInstance();
-        mFragmentManager.beginTransaction().replace(R.id.container, mCurrentFragment).commit();
+                /*  TODO uncomment this when layout designing is finished
+                // exit if the device doesn't have BLE
+                if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+                    Toast.makeText(this, R.string.no_ble, Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                */
+                // load ScanFragment
+                mFragmentManager = getSupportFragmentManager();
+                mCurrentFragment = ScanFragment.newInstance();
+                mFragmentManager.beginTransaction().replace(R.id.container, mCurrentFragment).commit();
+            }
+        });
     }
 
     @Override

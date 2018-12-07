@@ -26,4 +26,5 @@
     <string name="github_url">https://github.com/martindisch/SensorTag-Accelerometer</string>
     <string name="connection_lost">Lost connection with SensorTag</string>
     <string name="no_data">There is no recorded data</string>
+    <string name="game_start">Start a new game</string>
 </resources>
