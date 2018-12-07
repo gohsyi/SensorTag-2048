@@ -1,4 +1,4 @@
-package com.martindisch.accelerometer;
+package com.Project3C.SensorTagGame;
 
 /**
  * Interface for communication between MainActivity and fragments. Used for clicking on

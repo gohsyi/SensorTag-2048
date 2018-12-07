@@ -1,4 +1,4 @@
-package com.martindisch.accelerometer;
+package com.Project3C.SensorTagGame;
 
 import android.content.Context;
 import android.content.res.TypedArray;

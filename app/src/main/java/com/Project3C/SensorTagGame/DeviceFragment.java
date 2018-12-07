@@ -1,4 +1,4 @@
-package com.martindisch.accelerometer;
+package com.Project3C.SensorTagGame;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;

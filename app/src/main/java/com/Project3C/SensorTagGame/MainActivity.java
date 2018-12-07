@@ -1,4 +1,4 @@
-package com.martindisch.accelerometer;
+package com.Project3C.SensorTagGame;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
@@ -54,13 +53,19 @@ public class MainActivity extends AppCompatActivity implements OnStatusListener 
     }
 
     @Override
+    /*
+    * Click on the SensorTag MAC address and switch to its information
+    * TODO jump to 2048 game
+    * */
     public void onListFragmentInteraction(String address) {
         mCurrentFragment = DeviceFragment.newInstance(address);
-        FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-        transaction.replace(R.id.container, mCurrentFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        Intent intent = new Intent(MainActivity.this, GameActivity.class);
+        startActivity(intent);
+//        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+//        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+//        transaction.replace(R.id.container, mCurrentFragment);
+//        transaction.addToBackStack(null);
+//        transaction.commit();
     }
 
     @Override
@@ -92,6 +97,10 @@ public class MainActivity extends AppCompatActivity implements OnStatusListener 
                 builder.setMessage(R.string.about_message);
                 builder.setNegativeButton(R.string.github, new DialogInterface.OnClickListener() {
                     @Override
+                    /*
+                    * left top button (three points), to show about
+                    * # TODO CHANGE
+                    * */
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse(getString(R.string.github_url)));

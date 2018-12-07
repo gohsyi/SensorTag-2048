@@ -1,4 +1,4 @@
-package com.martindisch.accelerometer;
+package com.Project3C.SensorTagGame;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
