@@ -286,7 +286,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                     writer.close();
 
                     // get Uri from FileProvider
-                    Uri contentUri = FileProvider.getUriForFile(getActivity(), "com.martindisch.accelerometer.fileprovider", outputFile);
+                    Uri contentUri = FileProvider.getUriForFile(getActivity(), "com.Project3C.SensorTagGame.fileprovider", outputFile);
 
                     // create sharing intent
                     Intent shareIntent = new Intent();
