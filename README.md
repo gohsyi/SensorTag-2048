@@ -20,3 +20,7 @@ This project uses the following libraries
 - `DeviceFragment.java extends View.OnClickListener`
     - `BluetoothGattCallback mCallback`
         - `onCharacteristicRead` has parameter `BluetoothGattCharacteristic characteristic`, which contains information read from another parameter `BluetoothGatt gatt`.
+
+## Problems
+
+- When debuging on a android device, encountered `split_lib_slice_8_apk was defined multiple times`. Removing the build folder in app folder and Rebuild the project will solve the problem.

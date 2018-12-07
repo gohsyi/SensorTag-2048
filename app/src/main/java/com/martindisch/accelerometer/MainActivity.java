@@ -30,21 +30,21 @@ public class MainActivity extends AppCompatActivity implements OnStatusListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button button = (Button) findViewById(R.id.button);
+        // exit if the device doesn't have BLE
+        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            Toast.makeText(this, R.string.no_ble, Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+        mSwipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        mSwipeContainer.setEnabled(false);
+        mSwipeContainer.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
+
+        Button button = (Button) findViewById(R.id.welcome_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSwipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-                mSwipeContainer.setEnabled(false);
-//                mSwipeContainer.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
-
-                /*  TODO uncomment this when layout designing is finished
-                // exit if the device doesn't have BLE
-                if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-                    Toast.makeText(this, R.string.no_ble, Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                */
+                v.setVisibility(View.GONE);
                 // load ScanFragment
                 mFragmentManager = getSupportFragmentManager();
                 mCurrentFragment = ScanFragment.newInstance();
