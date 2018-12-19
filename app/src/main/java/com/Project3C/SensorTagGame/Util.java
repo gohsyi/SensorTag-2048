@@ -33,11 +33,11 @@ public class Util {
      */
     public static double[] convertAccel(byte[] value) {
         // ±8 G range
-        final float SCALE = 32768 / 8;
+        final float SCALE =65536f/500f ;
 
-        int x = (value[7] << 8) + value[6];
-        int y = (value[9] << 8) + value[8];
-        int z = (value[11] << 8) + value[10];
+        int x = ((int)(value[1]) << 8) + (int)(value[0]&0xff);
+        int y = ((int)(value[3]) << 8) + (int)(value[2]&0xff);
+        int z = ((int)(value[5]) << 8) + (int)(value[4]&0xff);
         return new double[]{((x / SCALE) * -1), y / SCALE, ((z / SCALE) * -1)};
     }
 

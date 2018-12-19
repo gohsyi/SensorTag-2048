@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity implements OnStatusListener 
     * */
     public void onListFragmentInteraction(String address) {
         mCurrentFragment = DeviceFragment.newInstance(address);
-        Intent intent = new Intent(MainActivity.this, GameActivity.class);
-        intent.putExtra("address", address);  // deliver the address to GameActivity
+        Intent intent = new Intent(MainActivity.this, GameActivity2048.class);
+        intent.putExtra("address", address);  // deliver the address to GameActivity2048
         startActivity(intent);
 //        FragmentTransaction transaction = mFragmentManager.beginTransaction();
 //        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);

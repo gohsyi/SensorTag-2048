@@ -39,7 +39,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.Project3C.SensorTagGame.GameActivity"
+            android:name="com.Project3C.SensorTagGame.GameActivity2048"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>

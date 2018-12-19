@@ -12,29 +12,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.UUID;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity2048 extends AppCompatActivity {
 
     private static final String WIDTH = "width";
     private static final String HEIGHT = "height";
@@ -46,6 +37,22 @@ public class GameActivity extends AppCompatActivity {
     private static final String GAME_STATE = "game state";
     private static final String UNDO_GAME_STATE = "undo game state";
     private MainView view;
+    private static int my_time=10;
+    private static double small_thld=80;
+    private static double big_thld=100;
+    private static int st_time=20;
+    private int ac_number=0;
+    private static int record_number=1;
+    private double my_Xacc;
+    private double my_Yacc;
+    private int record_time=0;
+  //  private double my_Xdis[];
+   // private double my_Ydis[];
+    private double sum_X;
+    private double sum_Y;
+    private int current_time=0;
+    private int last_time=0;
+    private int order=0;
 
     /* SensorTag part */
     private static final String ARG_ADDRESS = "address";
@@ -71,7 +78,6 @@ public class GameActivity extends AppCompatActivity {
         mAddress = intent.getStringExtra(ARG_ADDRESS);
 
         view = new MainView(this);
-
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         view.hasSaveState = settings.getBoolean("save_state", false);
 
@@ -85,10 +91,12 @@ public class GameActivity extends AppCompatActivity {
         /* initialize bluetooth manager & adapter */
 //        TODO debug if necessary
 //        BluetoothManager manager = (BluetoothManager) getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
-        BluetoothManager manager = (BluetoothManager) GameActivity.this.getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothManager manager = (BluetoothManager) GameActivity2048.this.getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = manager.getAdapter();
+        new Thread(new Mythread()).start();
     }
 
+    /*
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
@@ -109,6 +117,7 @@ public class GameActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+    */
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -124,6 +133,33 @@ public class GameActivity extends AppCompatActivity {
         deviceDisconnected();
         super.onPause();
         save();
+    }
+
+    public Handler handler =new Handler(){
+        public void handleMessage(Message msg){
+            if(order==10+record_number){view.game.move(1);last_time=0-st_time;order++;}
+            else if(order==20+record_number){view.game.move(2);last_time=0-st_time;order++;}
+            else if(order==30+record_number){view.game.move(3);last_time=0-st_time;order++;}
+            else if(order==40+record_number){view.game.move(0);last_time=0-st_time;order++;}
+            super.handleMessage(msg);
+        }
+    };
+
+    public class Mythread implements Runnable{
+        @Override
+        public void run(){
+            while(true){
+                try{
+                    Thread.sleep(100);
+                    Message message =new Message();
+                    message.what=1;
+                    handler.sendMessage(message);
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }
     }
 
     private void save() {
@@ -206,13 +242,13 @@ public class GameActivity extends AppCompatActivity {
         if (!mBluetoothAdapter.isEnabled()) {
 //            Toast.makeText(getActivity(), R.string.state_off, Toast.LENGTH_SHORT).show();
 //            getActivity().finish();
-            Toast.makeText(GameActivity.this, R.string.state_off, Toast.LENGTH_SHORT).show();
-            GameActivity.this.finish();
+            Toast.makeText(GameActivity2048.this, R.string.state_off, Toast.LENGTH_SHORT).show();
+            GameActivity2048.this.finish();
         }
 //        mListener.onShowProgress();
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
 //        mGatt = device.connectGatt(getActivity(), false, mCallback);
-        mGatt = device.connectGatt(GameActivity.this, false, mCallback);
+        mGatt = device.connectGatt(GameActivity2048.this, false, mCallback);
     }
 
     private BluetoothGattCallback mCallback = new BluetoothGattCallback() {
@@ -239,8 +275,8 @@ public class GameActivity extends AppCompatActivity {
             if (mEnable == null) {
 //                Toast.makeText(getActivity(), R.string.service_not_found, Toast.LENGTH_LONG).show();
 //                getActivity().finish();
-                Toast.makeText(GameActivity.this, R.string.service_not_found, Toast.LENGTH_LONG).show();
-                GameActivity.this.finish();
+                Toast.makeText(GameActivity2048.this, R.string.service_not_found, Toast.LENGTH_LONG).show();
+                GameActivity2048.this.finish();
             }
             /*
              * Bits starting with the least significant bit (the rightmost one)
@@ -255,7 +291,7 @@ public class GameActivity extends AppCompatActivity {
              * 8:9	    Accelerometer range (0=2G, 1=4G, 2=8G, 3=16G)
              * 10:15   Not used
              */
-            mEnable.setValue(0b1000111000, BluetoothGattCharacteristic.FORMAT_UINT16, 0);
+            mEnable.setValue(0b1001111111, BluetoothGattCharacteristic.FORMAT_UINT16, 0);
             mGatt.writeCharacteristic(mEnable);
         }
 
@@ -283,8 +319,8 @@ public class GameActivity extends AppCompatActivity {
                 if (mPeriod == null) {
 //                    Toast.makeText(getActivity(), R.string.service_not_found, Toast.LENGTH_LONG).show();
 //                    getActivity().finish();
-                    Toast.makeText(GameActivity.this, R.string.service_not_found, Toast.LENGTH_LONG).show();
-                    GameActivity.this.finish();
+                    Toast.makeText(GameActivity2048.this, R.string.service_not_found, Toast.LENGTH_LONG).show();
+                    GameActivity2048.this.finish();
                 }
                 mPeriod.setValue(0x0A, BluetoothGattCharacteristic.FORMAT_UINT8, 0);
                 mGatt.writeCharacteristic(mPeriod);
@@ -294,8 +330,8 @@ public class GameActivity extends AppCompatActivity {
                 if (mRead == null) {
 //                    Toast.makeText(getActivity(), R.string.characteristic_not_found, Toast.LENGTH_LONG).show();
 //                    getActivity().finish();
-                    Toast.makeText(GameActivity.this, R.string.characteristic_not_found, Toast.LENGTH_LONG).show();
-                    GameActivity.this.finish();
+                    Toast.makeText(GameActivity2048.this, R.string.characteristic_not_found, Toast.LENGTH_LONG).show();
+                    GameActivity2048.this.finish();
                 }
                 previousRead = Calendar.getInstance();
                 mGatt.readCharacteristic(mRead);
@@ -327,8 +363,74 @@ public class GameActivity extends AppCompatActivity {
             }
 
             // poll for next values
+
+
+            current_time=(current_time+1);
+            int index=(current_time-1)%record_number;
+            Log.i("time", Integer.toString(current_time));
+           my_Xacc=result[1];
+           my_Yacc=result[0];
+           sum_X=sum_X+my_Xacc;
+           sum_Y=sum_Y+my_Yacc;
+           double Xdis=0,Ydis=0;
+           int i;
+            Log.i("time", Integer.toString(st_time));
+           int xx=1,yy=1;
+           if(my_Xacc < 0) {xx=-1;my_Xacc=-my_Xacc;}
+           if(my_Yacc < 0) {yy=-1;my_Yacc=-my_Yacc;}
+           int tmp=0;
+           if(current_time>10) {
+               if (my_Xacc > big_thld && my_Xacc > my_Yacc) {
+                   if (xx > 0) {
+                       tmp = 4;
+                   } else {
+                       tmp = 2;
+                   }
+               }
+               else if (my_Yacc > big_thld) {
+                   if (yy > 0) {
+                       tmp = 3;
+                   } else {
+                       tmp = 1;
+                   }
+               }
+               else if(my_Xacc<small_thld && my_Yacc<small_thld){
+                   tmp=0;
+               }
+           }
+           if(last_time<0) {
+               last_time++;
+           }
+
+           if(order==0 && tmp!=0 && last_time==0){
+               order=tmp*10+1;
+               record_time=1;
+           }
+           else if(order%10<record_number && tmp!=0 ){
+               if(order/10==tmp){
+                   order++;
+               }
+               else{
+                   order=0;
+                   last_time=0;
+                   record_time=0;
+               }
+           }
+           else if(order%10>record_number && order%10<record_number+6 && ((order/10!= tmp && (order/10)%2==tmp%2) || tmp==0)){
+                   order=order+1;
+           }
+           else if(order%10==record_number+6 ){
+               order=0;
+               last_time=0;
+           }
+           else if(last_time==0 && my_Xacc<small_thld && my_Yacc<small_thld){
+               order=0;
+               last_time=0;
+           }
+            Log.i("order", Integer.toString(order));
             previousRead = Calendar.getInstance();
             mGatt.readCharacteristic(mRead);
+
         }
     };
 
