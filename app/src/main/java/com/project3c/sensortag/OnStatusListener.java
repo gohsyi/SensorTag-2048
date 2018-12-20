@@ -1,4 +1,4 @@
-package com.Project3C.SensorTagGame;
+package com.project3c.sensortag;
 
 /**
  * Interface for communication between MainActivity and fragments. Used for clicking on

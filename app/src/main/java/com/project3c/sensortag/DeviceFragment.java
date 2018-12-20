@@ -1,4 +1,4 @@
-package com.Project3C.SensorTagGame;
+package com.project3c.sensortag;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 import android.util.Log;
 
+import com.project3c.SensorTagGame.R;
+import com.project3c.game2048.Util;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;

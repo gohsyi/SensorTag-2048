@@ -1,4 +1,4 @@
-package com.Project3C.SensorTagGame;
+package com.project3c.game2048;
 
 class AnimationCell extends Cell {
     public final int[] extras;

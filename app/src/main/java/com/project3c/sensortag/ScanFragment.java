@@ -1,4 +1,4 @@
-package com.Project3C.SensorTagGame;
+package com.project3c.sensortag;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -19,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.project3c.SensorTagGame.R;
 
 import java.util.ArrayList;
 

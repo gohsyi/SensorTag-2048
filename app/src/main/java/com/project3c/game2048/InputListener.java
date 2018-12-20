@@ -1,9 +1,11 @@
-package com.Project3C.SensorTagGame;
+package com.project3c.game2048;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.project3c.SensorTagGame.R;
 
 class InputListener implements View.OnTouchListener {
 

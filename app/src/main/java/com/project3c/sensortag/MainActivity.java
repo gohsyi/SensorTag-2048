@@ -1,4 +1,4 @@
-package com.Project3C.SensorTagGame;
+package com.project3c.sensortag;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +17,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.project3c.SensorTagGame.R;
+import com.project3c.game2048.GameActivity2048;
 
 public class MainActivity extends AppCompatActivity implements OnStatusListener {
 

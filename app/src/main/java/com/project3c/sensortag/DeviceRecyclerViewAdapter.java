@@ -1,10 +1,12 @@
-package com.Project3C.SensorTagGame;
+package com.project3c.sensortag;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.project3c.SensorTagGame.R;
 
 import java.util.ArrayList;
 

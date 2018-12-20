@@ -1,4 +1,4 @@
-package com.Project3C.SensorTagGame;
+package com.project3c.game2048;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -18,6 +18,9 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.project3c.sensortag.Measurement;
+import com.project3c.SensorTagGame.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

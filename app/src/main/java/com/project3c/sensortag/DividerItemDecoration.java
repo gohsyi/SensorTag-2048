@@ -1,4 +1,4 @@
-package com.Project3C.SensorTagGame;
+package com.project3c.sensortag;
 
 import android.content.Context;
 import android.content.res.TypedArray;

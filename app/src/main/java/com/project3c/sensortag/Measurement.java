@@ -1,4 +1,4 @@
-package com.Project3C.SensorTagGame;
+package com.project3c.sensortag;
 
 /**
  * Represents one measurement of x, y and z acceleration
