@@ -18,8 +18,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.project3c.SensorTagGame.R;
-import com.project3c.game2048.GameActivity2048;
+import com.project3c.R;
+import com.project3c.game2048.GameActivity;
 
 public class MainActivity extends AppCompatActivity implements OnStatusListener {
 
@@ -62,8 +62,9 @@ public class MainActivity extends AppCompatActivity implements OnStatusListener 
     * */
     public void onListFragmentInteraction(String address) {
         mCurrentFragment = DeviceFragment.newInstance(address);
-        Intent intent = new Intent(MainActivity.this, GameActivity2048.class);
-        intent.putExtra("address", address);  // deliver the address to GameActivity2048
+        Intent intent = new Intent(MainActivity.this, GameActivity.class);
+        // deliver the address to GameActivity
+        intent.putExtra("address", address.substring("[SensorTag Device] ".length()));
         startActivity(intent);
 //        FragmentTransaction transaction = mFragmentManager.beginTransaction();
 //        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);

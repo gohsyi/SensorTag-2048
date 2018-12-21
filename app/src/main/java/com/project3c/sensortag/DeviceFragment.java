@@ -23,8 +23,7 @@ import android.widget.Toast;
 
 import android.util.Log;
 
-import com.project3c.SensorTagGame.R;
-import com.project3c.game2048.Util;
+import com.project3c.R;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -288,7 +287,7 @@ public class DeviceFragment extends Fragment implements View.OnClickListener {
                     writer.close();
 
                     // get Uri from FileProvider
-                    Uri contentUri = FileProvider.getUriForFile(getActivity(), "com.Project3C.SensorTagGame.fileprovider", outputFile);
+                    Uri contentUri = FileProvider.getUriForFile(getActivity(), "com.project3c.sensortag.fileprovider", outputFile);
 
                     // create sharing intent
                     Intent shareIntent = new Intent();

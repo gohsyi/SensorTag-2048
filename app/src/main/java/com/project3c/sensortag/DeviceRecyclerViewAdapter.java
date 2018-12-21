@@ -1,12 +1,13 @@
 package com.project3c.sensortag;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.project3c.SensorTagGame.R;
+import com.project3c.R;
 
 import java.util.ArrayList;
 
@@ -69,9 +70,13 @@ public class DeviceRecyclerViewAdapter extends RecyclerView.Adapter<DeviceRecycl
         // after the first device has been discovered, disable the spinning
         // status indicator that is partly hiding the element
         if (mAddresses.size() == 0) mListener.onHideProgress();
+        if (address.startsWith("B0:B4:48")) {
+            address = "[SensorTag Device] ".concat(address);
+        }
 
         // add the device to list if it doesn't exist
         if (!mAddresses.contains(address)) {
+            Log.i("DeviceRecycler", address);
             mAddresses.add(address);
             notifyItemInserted(mAddresses.indexOf(address));
         }

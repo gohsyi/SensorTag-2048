@@ -20,9 +20,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.project3c.SensorTagGame.R;
-
 import java.util.ArrayList;
+
+import com.project3c.R;
 
 /**
  * A Fragment searching for BLE devices and displaying them in a list.

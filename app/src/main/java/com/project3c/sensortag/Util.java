@@ -1,6 +1,4 @@
-package com.project3c.game2048;
-
-import com.project3c.sensortag.Measurement;
+package com.project3c.sensortag;
 
 import java.util.List;
 

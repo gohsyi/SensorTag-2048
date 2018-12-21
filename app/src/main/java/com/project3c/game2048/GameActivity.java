@@ -20,7 +20,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.project3c.sensortag.Measurement;
-import com.project3c.SensorTagGame.R;
+import com.project3c.R;
+import com.project3c.sensortag.Util;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,7 +29,7 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.UUID;
 
-public class GameActivity2048 extends AppCompatActivity {
+public class GameActivity extends AppCompatActivity {
 
     private static final String WIDTH = "width";
     private static final String HEIGHT = "height";
@@ -94,7 +95,7 @@ public class GameActivity2048 extends AppCompatActivity {
         /* initialize bluetooth manager & adapter */
 //        TODO debug if necessary
 //        BluetoothManager manager = (BluetoothManager) getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
-        BluetoothManager manager = (BluetoothManager) GameActivity2048.this.getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothManager manager = (BluetoothManager) GameActivity.this.getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = manager.getAdapter();
         new Thread(new Mythread()).start();
     }
@@ -245,13 +246,13 @@ public class GameActivity2048 extends AppCompatActivity {
         if (!mBluetoothAdapter.isEnabled()) {
 //            Toast.makeText(getActivity(), R.string.state_off, Toast.LENGTH_SHORT).show();
 //            getActivity().finish();
-            Toast.makeText(GameActivity2048.this, R.string.state_off, Toast.LENGTH_SHORT).show();
-            GameActivity2048.this.finish();
+            Toast.makeText(GameActivity.this, R.string.state_off, Toast.LENGTH_SHORT).show();
+            GameActivity.this.finish();
         }
 //        mListener.onShowProgress();
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
 //        mGatt = device.connectGatt(getActivity(), false, mCallback);
-        mGatt = device.connectGatt(GameActivity2048.this, false, mCallback);
+        mGatt = device.connectGatt(GameActivity.this, false, mCallback);
     }
 
     private BluetoothGattCallback mCallback = new BluetoothGattCallback() {
@@ -278,8 +279,8 @@ public class GameActivity2048 extends AppCompatActivity {
             if (mEnable == null) {
 //                Toast.makeText(getActivity(), R.string.service_not_found, Toast.LENGTH_LONG).show();
 //                getActivity().finish();
-                Toast.makeText(GameActivity2048.this, R.string.service_not_found, Toast.LENGTH_LONG).show();
-                GameActivity2048.this.finish();
+                Toast.makeText(GameActivity.this, R.string.service_not_found, Toast.LENGTH_LONG).show();
+                GameActivity.this.finish();
             }
             /*
              * Bits starting with the least significant bit (the rightmost one)
@@ -322,8 +323,8 @@ public class GameActivity2048 extends AppCompatActivity {
                 if (mPeriod == null) {
 //                    Toast.makeText(getActivity(), R.string.service_not_found, Toast.LENGTH_LONG).show();
 //                    getActivity().finish();
-                    Toast.makeText(GameActivity2048.this, R.string.service_not_found, Toast.LENGTH_LONG).show();
-                    GameActivity2048.this.finish();
+                    Toast.makeText(GameActivity.this, R.string.service_not_found, Toast.LENGTH_LONG).show();
+                    GameActivity.this.finish();
                 }
                 mPeriod.setValue(0x0A, BluetoothGattCharacteristic.FORMAT_UINT8, 0);
                 mGatt.writeCharacteristic(mPeriod);
@@ -333,8 +334,8 @@ public class GameActivity2048 extends AppCompatActivity {
                 if (mRead == null) {
 //                    Toast.makeText(getActivity(), R.string.characteristic_not_found, Toast.LENGTH_LONG).show();
 //                    getActivity().finish();
-                    Toast.makeText(GameActivity2048.this, R.string.characteristic_not_found, Toast.LENGTH_LONG).show();
-                    GameActivity2048.this.finish();
+                    Toast.makeText(GameActivity.this, R.string.characteristic_not_found, Toast.LENGTH_LONG).show();
+                    GameActivity.this.finish();
                 }
                 previousRead = Calendar.getInstance();
                 mGatt.readCharacteristic(mRead);

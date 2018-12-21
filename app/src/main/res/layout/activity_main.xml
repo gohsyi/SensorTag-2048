@@ -4,7 +4,7 @@
     android:id="@+id/swipeContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.project3c.SensorTagGame.com.Project3C.sensortag.MainActivity">
+    tools:context="com.project3c.sensortag.MainActivity">
 
     <FrameLayout
         android:id="@+id/container"

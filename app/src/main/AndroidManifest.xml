@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.project3c.SensorTagGame">
+    package="com.project3c">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -19,7 +19,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.project3c.SensorTagGame.fileprovider"
+            android:authorities="com.project3c.sensortag.fileprovider"
             android:grantUriPermissions="true"
             android:exported="false">
             <meta-data
@@ -39,7 +39,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.project3c.game2048.GameActivity2048"
+            android:name="com.project3c.game2048.GameActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>

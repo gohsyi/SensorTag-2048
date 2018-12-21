@@ -5,7 +5,7 @@ import android.content.DialogInterface;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.project3c.SensorTagGame.R;
+import com.project3c.R;
 
 class InputListener implements View.OnTouchListener {
 

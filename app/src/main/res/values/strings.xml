@@ -2,6 +2,8 @@
     <string name="app_name">sensortag-2048</string>
 
     <!-- sensortag part -->
+    <string name="address_prefix">"B0:B4:48"</string>
+    <string name="sensortag_address">"[SensorTag Device] "</string>
     <string name="no_ble">BLE not supported on this device</string>
     <string name="state_off">Bluetooth disabled</string>
     <string name="service_not_found">GATT service not found - incompatible device</string>

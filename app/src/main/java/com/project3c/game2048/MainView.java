@@ -11,7 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
 
-import com.project3c.SensorTagGame.R;
+import com.project3c.R;
 
 import java.util.ArrayList;
 
