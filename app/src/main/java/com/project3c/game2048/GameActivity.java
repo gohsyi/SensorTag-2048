@@ -31,49 +31,56 @@ import java.util.UUID;
 
 public class GameActivity extends AppCompatActivity {
 
-    private static final String WIDTH = "width";
-    private static final String HEIGHT = "height";
-    private static final String SCORE = "score";
-    private static final String HIGH_SCORE = "high score temp";
-    private static final String UNDO_SCORE = "undo score";
-    private static final String CAN_UNDO = "can undo";
-    private static final String UNDO_GRID = "undo";
-    private static final String GAME_STATE = "game state";
+    private static final String WIDTH           = "width";
+    private static final String HEIGHT          = "height";
+    private static final String SCORE           = "score";
+    private static final String HIGH_SCORE      = "high score temp";
+    private static final String UNDO_SCORE      = "undo score";
+    private static final String CAN_UNDO        = "can undo";
+    private static final String UNDO_GRID       = "undo";
+    private static final String GAME_STATE      = "game state";
     private static final String UNDO_GAME_STATE = "undo game state";
+
+    // IO control characteristics
+    private static final int ALL_OFF         = 0b00000000;
+    private static final int RED_ON          = 0b00000001;
+    private static final int GREEN_ON        = 0b00000010;
+    private static final int RED_GREEN_ON    = 0b00000011;
+    private static final int BUZZER_ON       = 0b00000100;
+    private static final int RED_BUZZER_ON   = 0b00000101;
+    private static final int GREEN_BUZZER_ON = 0b00000110;
+    private static final int ALL_ON          = 0b00000111;
+
     private MainView view;
-    private static int my_time=10;
-    private static double small_thld=80;
-    private static double big_thld=100;
-    private static int st_time=20;
-    private int ac_number=0;
-    private static int record_number=1;
+    private static int my_time = 10;
+    private static double small_thld = 80;
+    private static double big_thld = 100;
+    private static int st_time = 20;
+    private int ac_number = 0;
+    private static int record_number = 1;
     private double my_Xacc;
     private double my_Yacc;
-    private int record_time=0;
-  //  private double my_Xdis[];
-   // private double my_Ydis[];
+    private int record_time = 0;
+//    private double my_Xdis[];
+//    private double my_Ydis[];
     private double sum_X;
     private double sum_Y;
-    private int current_time=0;
-    private int last_time=0;
-    private int order=0;
+    private int current_time = 0;
+    private int last_time = 0;
+    private int order = 0;
 
     /* SensorTag part */
     private static final String ARG_ADDRESS = "address";
     private String mAddress;
     private boolean mIsRecording = false;
     private LinkedList<Measurement> mRecording;
-//    private OnStatusListener mListener;
+    //    private OnStatusListener mListener;
     private Calendar previousRead, recordingStart;
 
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothGatt mGatt;
-    private BluetoothGattService mMovService;
-    private BluetoothGattCharacteristic mRead, mEnable, mPeriod;
-
-//    private TextView mXAxis, mYAxis, mZAxis, mMax;
-//    private Button mStart, mStop, mExport;
-//    private LineChart mChart;
+    private BluetoothGattService mMovService, mIOService;
+    private BluetoothGattCharacteristic mRead, mEnable, mMode, mWrite, mPeriod;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +101,9 @@ public class GameActivity extends AppCompatActivity {
 
         /* initialize bluetooth manager & adapter */
 //        TODO debug if necessary
-//        BluetoothManager manager = (BluetoothManager) getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
         BluetoothManager manager = (BluetoothManager) GameActivity.this.getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = manager.getAdapter();
+
         new Thread(new Mythread()).start();
     }
 
@@ -139,29 +146,45 @@ public class GameActivity extends AppCompatActivity {
         save();
     }
 
-    public Handler handler =new Handler(){
-        public void handleMessage(Message msg){
-            if(order==10+record_number){view.game.move(1);last_time=0-st_time;order++;}
-            else if(order==20+record_number){view.game.move(2);last_time=0-st_time;order++;}
-            else if(order==30+record_number){view.game.move(3);last_time=0-st_time;order++;}
-            else if(order==40+record_number){view.game.move(0);last_time=0-st_time;order++;}
+    public Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            if (order == 10 + record_number) {
+                view.game.move(1);
+                last_time = 0 - st_time;
+                order++;
+            } else if (order == 20 + record_number) {
+                view.game.move(2);
+                last_time = 0 - st_time;
+                order++;
+            } else if (order == 30 + record_number) {
+                view.game.move(3);
+                last_time = 0 - st_time;
+                order++;
+            } else if (order == 40 + record_number) {
+                view.game.move(0);
+                last_time = 0 - st_time;
+                order++;
+            }
             super.handleMessage(msg);
         }
     };
 
-    public class Mythread implements Runnable{
+    public class Mythread implements Runnable {
         @Override
-        public void run(){
-            while(true){
-                try{
+        public void run() {
+            while (true) {
+                try {
                     Thread.sleep(100);
-                    Message message =new Message();
-                    message.what=1;
+
+                    if (mGatt != null && mRead != null) {
+                        mGatt.readCharacteristic(mRead);  // TODO
+                    }
+                    Message message = new Message();
+                    message.what = 1;
                     handler.sendMessage(message);
-                }catch(InterruptedException e){
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             }
         }
     }
@@ -244,15 +267,32 @@ public class GameActivity extends AppCompatActivity {
      */
     private void connectDevice(String address) {
         if (!mBluetoothAdapter.isEnabled()) {
-//            Toast.makeText(getActivity(), R.string.state_off, Toast.LENGTH_SHORT).show();
-//            getActivity().finish();
             Toast.makeText(GameActivity.this, R.string.state_off, Toast.LENGTH_SHORT).show();
             GameActivity.this.finish();
         }
-//        mListener.onShowProgress();
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
-//        mGatt = device.connectGatt(getActivity(), false, mCallback);
         mGatt = device.connectGatt(GameActivity.this, false, mCallback);
+    }
+
+    public void IO_controller(int value) {
+        // set IO config as remote mode
+        // TODO figure out why everytime I should send this
+        mIOService = mGatt.getService(UUID.fromString("F000AA64-0451-4000-B000-000000000000"));
+        mMode = mIOService.getCharacteristic(UUID.fromString("F000AA66-0451-4000-B000-000000000000"));
+        if (mMode == null) {
+            Toast.makeText(GameActivity.this, R.string.service_not_found, Toast.LENGTH_LONG).show();
+            GameActivity.this.finish();
+        }
+        Log.i("IO", mMode.toString());
+        mMode.setValue(0b00000001, BluetoothGattCharacteristic.FORMAT_UINT8, 0);  // remote mode
+        mGatt.writeCharacteristic(mMode);
+
+        Log.d("IO sending", Integer.toString(value));
+        mIOService = mGatt.getService(UUID.fromString("F000AA64-0451-4000-B000-000000000000"));
+        mWrite = mIOService.getCharacteristic(UUID.fromString("F000AA65-0451-4000-B000-000000000000"));
+        mWrite.setValue(value, BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+        Log.d("mWrite", mWrite.toString());
+        mGatt.writeCharacteristic(mWrite);
     }
 
     private BluetoothGattCallback mCallback = new BluetoothGattCallback() {
@@ -273,15 +313,15 @@ public class GameActivity extends AppCompatActivity {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             super.onServicesDiscovered(gatt, status);
+
             // as soon as services are discovered, acquire characteristic and try enabling
             mMovService = mGatt.getService(UUID.fromString("F000AA80-0451-4000-B000-000000000000"));
             mEnable = mMovService.getCharacteristic(UUID.fromString("F000AA82-0451-4000-B000-000000000000"));
             if (mEnable == null) {
-//                Toast.makeText(getActivity(), R.string.service_not_found, Toast.LENGTH_LONG).show();
-//                getActivity().finish();
                 Toast.makeText(GameActivity.this, R.string.service_not_found, Toast.LENGTH_LONG).show();
                 GameActivity.this.finish();
             }
+            Log.i("Enable", mEnable.toString());
             /*
              * Bits starting with the least significant bit (the rightmost one)
              * 0       Gyroscope z axis enable
@@ -291,7 +331,7 @@ public class GameActivity extends AppCompatActivity {
              * 4       Accelerometer y axis enable
              * 5       Accelerometer x axis enable
              * 6       Magnetometer enable (all axes)
-             * 7       Wake-On-Motion Enable
+             * 7       Wake-On-Motion Enable TODO which is better
              * 8:9	    Accelerometer range (0=2G, 1=4G, 2=8G, 3=16G)
              * 10:15   Not used
              */
@@ -321,24 +361,21 @@ public class GameActivity extends AppCompatActivity {
                 // if enable was successful, set the sensor period to the lowest value
                 mPeriod = mMovService.getCharacteristic(UUID.fromString("F000AA83-0451-4000-B000-000000000000"));
                 if (mPeriod == null) {
-//                    Toast.makeText(getActivity(), R.string.service_not_found, Toast.LENGTH_LONG).show();
-//                    getActivity().finish();
                     Toast.makeText(GameActivity.this, R.string.service_not_found, Toast.LENGTH_LONG).show();
                     GameActivity.this.finish();
                 }
+                // Period = [Input*10]ms (lower limit 100ms), default 1000ms
                 mPeriod.setValue(0x0A, BluetoothGattCharacteristic.FORMAT_UINT8, 0);
                 mGatt.writeCharacteristic(mPeriod);
             } else if (characteristic == mPeriod) {
                 // if setting sensor period was successful, start polling for sensor values
                 mRead = mMovService.getCharacteristic(UUID.fromString("F000AA81-0451-4000-B000-000000000000"));
                 if (mRead == null) {
-//                    Toast.makeText(getActivity(), R.string.characteristic_not_found, Toast.LENGTH_LONG).show();
-//                    getActivity().finish();
                     Toast.makeText(GameActivity.this, R.string.characteristic_not_found, Toast.LENGTH_LONG).show();
                     GameActivity.this.finish();
                 }
                 previousRead = Calendar.getInstance();
-                mGatt.readCharacteristic(mRead);
+//                mGatt.readCharacteristic(mRead);
                 deviceConnected();
             }
         }
@@ -367,77 +404,78 @@ public class GameActivity extends AppCompatActivity {
             }
 
             // poll for next values
-
-
-            current_time=(current_time+1);
-            int index=(current_time-1)%record_number;
+            current_time = (current_time + 1);
+            int index = (current_time - 1) % record_number;
             Log.i("time", Integer.toString(current_time));
-           my_Xacc=result[1];
-           my_Yacc=result[0];
-           sum_X=sum_X+my_Xacc;
-           sum_Y=sum_Y+my_Yacc;
-           double Xdis=0,Ydis=0;
-           int i;
+            my_Xacc = result[1];
+            my_Yacc = result[0];
+            sum_X = sum_X + my_Xacc;
+            sum_Y = sum_Y + my_Yacc;
+            double Xdis = 0, Ydis = 0;
+            int i;
             Log.i("time", Integer.toString(st_time));
-           int xx=1,yy=1;
-           if(my_Xacc < 0) {xx=-1;my_Xacc=-my_Xacc;}
-           if(my_Yacc < 0) {yy=-1;my_Yacc=-my_Yacc;}
-           int tmp=0;
-           if(current_time>10) {
-               if (my_Xacc > big_thld && my_Xacc > my_Yacc) {
-                   if (xx > 0) {
-                       tmp = 4;
-                   } else {
-                       tmp = 2;
-                   }
-               }
-               else if (my_Yacc > big_thld) {
-                   if (yy > 0) {
-                       tmp = 3;
-                   } else {
-                       tmp = 1;
-                   }
-               }
-               else if(my_Xacc<small_thld && my_Yacc<small_thld){
-                   tmp=0;
-               }
-           }
-           if(last_time<0) {
-               last_time++;
-           }
+            int xx = 1, yy = 1;
+            if (my_Xacc < 0) {
+                xx = -1;
+                my_Xacc = -my_Xacc;
+            }
+            if (my_Yacc < 0) {
+                yy = -1;
+                my_Yacc = -my_Yacc;
+            }
+            int tmp = 0;
+            if (current_time > 10) {
+                if (my_Xacc > big_thld && my_Xacc > my_Yacc) {
+                    if (xx > 0) {
+                        tmp = 4;
+                    } else {
+                        tmp = 2;
+                    }
+                } else if (my_Yacc > big_thld) {
+                    if (yy > 0) {
+                        tmp = 3;
+                    } else {
+                        tmp = 1;
+                    }
+                } else if (my_Xacc < small_thld && my_Yacc < small_thld) {
+                    tmp = 0;
+                }
+            }
+            if (last_time < 0) {
+                last_time++;
+            }
 
-           if(order==0 && tmp!=0 && last_time==0){
-               order=tmp*10+1;
-               record_time=1;
-           }
-           else if(order%10<record_number && tmp!=0 ){
-               if(order/10==tmp){
-                   order++;
-               }
-               else{
-                   order=0;
-                   last_time=0;
-                   record_time=0;
-               }
-           }
-           else if(order%10>record_number && order%10<record_number+6 && ((order/10!= tmp && (order/10)%2==tmp%2) || tmp==0)){
-                   order=order+1;
-           }
-           else if(order%10==record_number+6 ){
-               order=0;
-               last_time=0;
-           }
-           else if(last_time==0 && my_Xacc<small_thld && my_Yacc<small_thld){
-               order=0;
-               last_time=0;
-           }
+            if (order == 0 && tmp != 0 && last_time == 0) {
+                order = tmp * 10 + 1;
+                record_time = 1;
+            } else if (order % 10 < record_number && tmp != 0) {
+                if (order / 10 == tmp) {
+                    order++;
+                } else {
+                    order = 0;
+                    last_time = 0;
+                    record_time = 0;
+                }
+            } else if (order % 10 > record_number &&
+                    order % 10 < record_number + 6
+                    && ((order / 10 != tmp && (order / 10) % 2 == tmp % 2) || tmp == 0)) {
+                order = order + 1;
+            } else if (order % 10 == record_number + 6) {
+                order = 0;
+                last_time = 0;
+            } else if (last_time == 0 && my_Xacc < small_thld && my_Yacc < small_thld) {
+                order = 0;
+                last_time = 0;
+            }
             Log.i("order", Integer.toString(order));
+            if (order == 0)
+                IO_controller((int)(Math.random() * 7));
+            else
+                IO_controller(ALL_OFF);
             previousRead = Calendar.getInstance();
-            mGatt.readCharacteristic(mRead);
-
+//            mGatt.readCharacteristic(mRead);
         }
     };
-
 
     /**
      * Called when the device has been fully connected.

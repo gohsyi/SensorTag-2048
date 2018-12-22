@@ -11,11 +11,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/welcome_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/game_start"/>
+        <!--<Button-->
+            <!--android:id="@+id/welcome_button"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:text="@string/game_start"/>-->
 
     </FrameLayout>
 </android.support.v4.widget.SwipeRefreshLayout>

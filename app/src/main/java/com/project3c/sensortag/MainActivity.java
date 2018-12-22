@@ -42,24 +42,28 @@ public class MainActivity extends AppCompatActivity implements OnStatusListener 
         mSwipeContainer.setEnabled(false);
         mSwipeContainer.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorAccent));
 
-        Button button = (Button) findViewById(R.id.welcome_button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.setVisibility(View.GONE);
-                // load ScanFragment
-                mFragmentManager = getSupportFragmentManager();
-                mCurrentFragment = ScanFragment.newInstance();
-                mFragmentManager.beginTransaction().replace(R.id.container, mCurrentFragment).commit();
-            }
-        });
+        mFragmentManager = getSupportFragmentManager();
+        mCurrentFragment = ScanFragment.newInstance();
+        mFragmentManager.beginTransaction().replace(R.id.container, mCurrentFragment).commit();
+
+//        Button button = (Button) findViewById(R.id.welcome_button);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                v.setVisibility(View.GONE);
+//                // load ScanFragment
+//                mFragmentManager = getSupportFragmentManager();
+//                mCurrentFragment = ScanFragment.newInstance();
+//                mFragmentManager.beginTransaction().replace(R.id.container, mCurrentFragment).commit();
+//            }
+//        });
     }
 
     @Override
     /*
-    * Click on the SensorTag MAC address and switch to its information
-    * TODO jump to 2048 game
-    * */
+     * Click on the SensorTag MAC address and switch to its information
+     * TODO jump to 2048 game
+     * */
     public void onListFragmentInteraction(String address) {
         mCurrentFragment = DeviceFragment.newInstance(address);
         Intent intent = new Intent(MainActivity.this, GameActivity.class);
@@ -103,9 +107,9 @@ public class MainActivity extends AppCompatActivity implements OnStatusListener 
                 builder.setNegativeButton(R.string.github, new DialogInterface.OnClickListener() {
                     @Override
                     /*
-                    * left top button (three points), to show about
-                    * # TODO CHANGE
-                    * */
+                     * left top button (three points), to show about
+                     * # TODO CHANGE
+                     * */
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse(getString(R.string.github_url)));
