@@ -1,26 +1,7 @@
-# SensorTag Accelerometer
-An Android app connecting to a TI CC2650 SensorTag for acceleration measurements.
+# SensorTag 2048
 
-It does
-* Realtime display of acceleration measurements on all three axes
-* Recording of acceleration data in a certain timeframe with
-* Display of maximum experienced combined acceleration
-* Linegraph showing values for all three axes as well as combined acceleration
-* Export of raw data as CSV
+Play 2048 on Android device with SensorTag CC2650.
 
-Tested on a TI SensorTag CC2650STK running firmware 1.32.
+Flip SensorTag device in four directions corresponds to four actions in 2048.
 
-## Libraries
-This project uses the following libraries
-* [MPAndroidChart](https://github.com/PhilJay/MPAndroidChart)
-* Android AppCompat and Support Library
-
-## Implementations
-
-- `DeviceFragment.java extends View.OnClickListener`
-    - `BluetoothGattCallback mCallback`
-        - `onCharacteristicRead` has parameter `BluetoothGattCharacteristic characteristic`, which contains information read from another parameter `BluetoothGatt gatt`.
-
-## Problems
-
-- When debuging on a android device, encountered `split_lib_slice_8_apk was defined multiple times`. Removing the build folder in app folder and Rebuild the project will solve the problem.
+Our implementation is: read gyroscope values of three axises real timely, then decide whether to act according to gyroscope values and our threshold.
