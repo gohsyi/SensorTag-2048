@@ -1,6 +1,6 @@
 # SensorTag 2048
 
-Play 2048 on Android device with SensorTag CC2650.
+Play 2048 on Android device with SensorTag CC2650. This is part of our project of EI312 工程实践与科技创新Ⅲ-C.
 
 Flip SensorTag device in four directions corresponds to four actions in 2048.
 
